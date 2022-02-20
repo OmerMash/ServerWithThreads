@@ -6,6 +6,8 @@
 package com.hit.dao;
 
 import com.hit.algorithm.Person;
+
+import java.io.IOException;
 import java.util.List;
 
 public interface IDAO {
@@ -15,5 +17,17 @@ public interface IDAO {
 
     void add(Person var1);
 
-    boolean remove(Person var1);
+    public Person addPerson(String name, int age, String id, String profession, int years_of_experience) throws IOException;
+
+    public List<Person> searchByAge(int min_age, int max_age);
+
+    public List<Person> searchByProfession(String profession);
+
+    public List<Person> searchByMinYearsOfExperience(int min_years_of_experience);
+
+    public boolean save();
+
+    public boolean removePerson(String p);
+
+    String GetData();
 }

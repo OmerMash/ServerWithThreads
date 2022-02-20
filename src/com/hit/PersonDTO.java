@@ -1,3 +1,5 @@
+package com.hit;
+
 public class PersonDTO {
     private int personCounter = 0;
     private int age;
