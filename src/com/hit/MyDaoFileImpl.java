@@ -86,13 +86,16 @@ class MyDaoFileImpl implements IDAO {
 
         @Override
         public boolean removePerson(String p) {
-            for (Person person: personList) {
-                if (person.getID() == p) {
-                    personList.remove(person);
-                    return true;
+        boolean f = false;
+            for (int i=0 ; i < personList.size() ; i++) {
+                if (personList.get(i).getID().equals(p)) {
+                    personList.remove(i);
+                    i--;
+                    f =  true;
                 }
             }
-            return false;
+            save();
+            return f;
         }
 
     public List < Person > searchByMinYearsOfExperience(int min_years_of_experience) {
