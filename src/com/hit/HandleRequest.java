@@ -50,30 +50,26 @@ class HandleRequest implements Runnable {
     public void run(){
         String[] splited_str = null;
         String str="";
+        String profession = "";
+        Integer experience = 0;
+        Integer min_age = 0;
+        Integer max_age = 100;
         while(!str.equals("stop")){
             try {
                 str = din.readUTF();
                 if(str.startsWith("ADD")){
                     str = str.substring(3);
                     str = jsonToString(str);
-//                    str = str.replace("{", "");
-//                    str = str.replace("}", "");
-//                    str = str.replace("_", " ");
-//                    str = str.replace("name:", "");
-//                    str = str.replace("age:", "");
-//                    str = str.replace("ID:", "");
-//                    str = str.replace("profession:", "");
-//                    str = str.replace("experience y:", "");
-//                    str = str.replace("operation:", "");
-//                    str = str.replace("min", "");
-//                    str = str.replace("max", "");
-//                    str = str.replace("years of experience:", "");
                     System.out.println("STR content: " + str);
                     String[] t = str.split(",");
+                    for(int i=0 ; i<t.length ; i++){
+                        t[i] = t[i].trim();
+                        dout.writeUTF("\n");
+                        dout.flush();
+                    }
                     System.out.println("t length: " + t.length);
-                    Person p = new Person(t[0],100,t[2],t[3],200);
+                    Person p = new Person(t[0],Integer.parseInt(t[1]),t[2],t[3],Integer.parseInt(t[4]));
                     myModel.add(p);
-                    myModel.save();
                 }
                 else if(str.startsWith("REMOVE")){
                     str = str.replace("REMOVE", "");
@@ -85,54 +81,43 @@ class HandleRequest implements Runnable {
                     str = str.replace("SEARCH", "");
                     str = str.replace("\n", "");
                     splited_str = str.split(",");
-//                    if(splited_str[2] == ""){
-//                        this.algoSearch = new SearchByProfessionImpl();
-//                    }
                     if(splited_str.length == 1){
                         this.algoSearch = new SearchByProfessionImpl();
+                        profession = "";
+                        experience = 0;
+                        min_age = 0;
+                        max_age = 100;
                     }
                     else if(splited_str.length == 2) {
                         this.algoSearch = new SearchByMinYOEImpl();
+                        profession = "";
+                        experience = Integer.parseInt(splited_str[1]);
+                        min_age = 0;
+                        max_age = 100;
                     }
                     else if(splited_str.length == 4){
                         this.algoSearch = new SearchByAgeImpl();
+                        profession = "";
+                        experience = 0;
+                        min_age = Integer.parseInt(splited_str[2]);
+                        max_age = Integer.parseInt(splited_str[3]);
                     }
+                    else {
+                        this.algoSearch = new SearchByAgeImpl();
+                        profession = "";
+                        experience = 0;
+                        min_age = 0;
+                        max_age = 100;
+                    }
+                    List<Person> list = algoSearch.search(myModel.getList(),min_age,max_age,profession,experience);
+                    String s = "";
+                    for(Person p : list){
+                        s += ("Name: " + p.getName() + ", Age:" + p.getAge() + ", Profession: " + p.getProfession() + ", Experience: " + p.getExperience_y() + ", ID: " + p.getID() + "\n");
+                    }
+                    dout.writeUTF(s);
+                    dout.flush();
                 }
-                String profession = "";
-                Integer experience = 0;
-                Integer min_age = 0;
-                Integer max_age = 100;
-                if(splited_str.length == 1){
-                    profession = splited_str[0];
-                    experience = 0;
-                    min_age = 0;
-                    max_age = 100;
-                }
-                else if(splited_str.length == 2){
-                    profession = "";
-                    experience = Integer.parseInt(splited_str[1]);
-                    min_age = 0;
-                    max_age = 100;
-                }
-                else if(splited_str.length == 4){
-                    profession = "";
-                    experience = 0;
-                    min_age = Integer.parseInt(splited_str[2]);
-                    max_age = Integer.parseInt(splited_str[3]);
-                }
-                List<Person> list = algoSearch.search(myModel.getList(),min_age,max_age,profession,experience);
-                String s = "";
-                for(Person p : list){
-                    s += ("Name: " + p.getName() + ", Age:" + p.getAge() + ", Profession: " + p.getProfession() + ", Experience: " + p.getExperience_y() + "\n");
-                }
-                dout.writeUTF(s);
-                dout.flush();
 
-//                List<Person> personList = new ArrayList<Person>();
-//                System.out.println("client says: " + str);
-//                System.out.println(myName + ": " + myModel.GetData());
-//                dout.writeUTF(myName + ": " + Arrays.toString(personList.toArray()) + "\n");
-//                dout.flush();
             }
             catch(IOException exception){}
         }

@@ -19,7 +19,7 @@ import java.util.List;
 class MyDaoFileImpl implements IDAO {
     private ObjectOutputStream output;
     private ObjectInputStream input;
-    private final List < Person > personList = new ArrayList();
+    private final List <Person> personList = new ArrayList();
     Object p;
     private List<Person> searchResult;
 
@@ -43,7 +43,7 @@ class MyDaoFileImpl implements IDAO {
     }
 
     @Override
-    public List < Person > getList() {
+    public List <Person> getList() {
         return this.personList;
     }
 
@@ -82,6 +82,7 @@ class MyDaoFileImpl implements IDAO {
         @Override
         public void add(Person p) {
             this.personList.add(p);
+            save();
         }
 
         @Override
